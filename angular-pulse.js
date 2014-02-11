@@ -1,7 +1,9 @@
 /**
+ * Factory fo
  * Created by steare on 2/10/14.
  */
 angular.module('aio.services.angular-pulse', [])
+
   .factory('pulse', function ($rootScope) {
 
     function Pulse(opts) {
@@ -15,12 +17,13 @@ angular.module('aio.services.angular-pulse', [])
 
     }
 
-    Pulse.prototype.checkPulse = function ( callback ) {
+
+  Pulse.prototype.checkPulse = function ( callback ) {
 
       this.prevDt = this.prevDt || new Date();
       this.curDt = new Date();
 
-      var timeDiff = this.curDt.getTime() - this.prevDt.getTime()
+      var timeDiff = this.curDt.getTime() - this.prevDt.getTime();
 
       this.prevDt = this.curDt;
 
