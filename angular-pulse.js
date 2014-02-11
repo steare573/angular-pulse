@@ -4,15 +4,23 @@
  */
 angular.module('aio.services.angular-pulse', [])
 
-  .factory('pulse', function ($rootScope) {
+  .factory('pulse', function ($rootScope, opts) {
 
-    function Pulse(opts) {
+    function Pulse (opts) {
 
       var options = opts || {};
       this.prevTs = null;
       this.curTs = null;
       this.timeDiffThreshold = options.timeDiffThreshold || 1000;
       this.pulseEventName = options.pulseEventName || 'deviceResurrected';
+      this.autoStart = options.autoStart || false;
+      this.pulseCheckDelay = options.pulseCheckDelay || 1000;
+      this.pulseInt = null;
+      this.watchCallback = options.watchCallback || null;
+
+      if(this.autoStart) {
+        this.startWatch();
+      }
 
 
     }
@@ -48,7 +56,7 @@ angular.module('aio.services.angular-pulse', [])
 
     };
 
-    Pulse.prototype.watch = function ( callback ) {
+    Pulse.prototype.watchOnce = function ( callback ) {
 
       var self = this;
 
@@ -65,6 +73,23 @@ angular.module('aio.services.angular-pulse', [])
       });
     };
 
+    Pulse.prototype.startWatch = function ( callback ) {
+      if(callback) this.setCallback(callback);
+      this.pulseInt = setInterval( this.watchOnce( this.watchCallback ), this.pulseCheckDelay );
+
+    };
+
+    Pulse.prototype.endWatch = function (callback ) {
+      clearInterval(this.pulseInt);
+    };
+
+    Pulse.prototype.setCallback = function (callback) {
+      this.watchCallback = callback;
+    }
+
+    Pulse.prototype.clearCallback = function () {
+      this.setCallback(null);
+    }
     return new Pulse();
 
   });
